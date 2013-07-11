@@ -1,0 +1,32 @@
+{
+  "name": "ETI Topic Saver",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "description": "Easily save ETI topics for later viewing",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "default_locale": "en",
+  "background": {
+    "page": "src/bg/background.html",
+    "persistent": true
+  },
+  "options_page": "src/options/index.html",
+  "permissions": [
+    "https://google.com/*",
+    "storage"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "http://boards.endoftheinter.net/*"
+      ],
+      "js": [
+        "js/jquery/jquery.js",
+        "src/inject/inject.js"
+      ]
+    }
+  ]
+}
