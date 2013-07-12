@@ -70,8 +70,12 @@ chrome.extension.sendMessage({}, function(response) {
 				console.log("Defaulting avatar display to true")
 				chrome.storage.local.set({"avatars": true});
 			}
-
 			updateAvatarText();
+			if (showAvatars === true)
+			{
+				$('.userpic-holder').show();
+			}
+			
 		}
 
 		function updateFromStorage(items)
@@ -171,6 +175,7 @@ chrome.extension.sendMessage({}, function(response) {
 		function updateAvatarText()
 		{
 			showAvatars ? $('#avatar-toggle').text("Avatars On") : $('#avatar-toggle').text("Avatars Off");
+			console.log('updateAvatarText() : ' + showAvatars);
 		}
 	}
 	}, 10);
