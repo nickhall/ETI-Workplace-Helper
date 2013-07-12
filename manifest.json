@@ -26,6 +26,9 @@
       "js": [
         "js/jquery/jquery.js",
         "src/inject/inject.js"
+      ],
+      "css": [
+        "css/helper.css"
       ]
     }
   ]

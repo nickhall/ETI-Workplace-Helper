@@ -33,9 +33,14 @@ chrome.extension.sendMessage({}, function(response) {
                                                                                   alert('NWS link');
                                                                               }).css("color", "gray");
 
+		// Storage operations
 		var savedTopics = [];
+		var showAvatars = true;
 		chrome.storage.sync.get("saved", updateFromStorage);
+		chrome.storage.local.get("avatars", updateFromLocal);
 		
+
+		// Logic
 		function toggleMenu(e)
 		{
 			e.preventDefault();
@@ -51,12 +56,33 @@ chrome.extension.sendMessage({}, function(response) {
 			});
 		}
 
+		function updateFromLocal(items)
+		{
+			if (items["avatars"] !== undefined)
+			{
+				showAvatars = items["avatars"];
+				if (showAvatars === false)
+					$('.userpic-holder').hide();
+				console.log("Loaded avatar settings from local storage: " + showAvatars);
+			}
+			else
+			{
+				console.log("Defaulting avatar display to true")
+				chrome.storage.local.set({"avatars": true});
+			}
+
+			updateAvatarText();
+		}
+
 		function updateFromStorage(items)
 		{
-			savedTopics = items["saved"];
+			if (items["saved"] !== undefined)
+			{
+				savedTopics = items["saved"];
+			}
 			updateLinks();
 			rebuildList();
-			console.log("Loaded from Chrome storage: " + savedTopics);
+			console.log("Loaded saved topics from network storage: " + savedTopics);
 		}
 
 		function saveLink(e)
@@ -109,11 +135,6 @@ chrome.extension.sendMessage({}, function(response) {
 			});
 		}
 
-		function toggleLink(link)
-		{
-			$(link).text("TOGGLED!");
-		}
-
 		$(".oh").hover(
 			function()
 			{
@@ -131,8 +152,25 @@ chrome.extension.sendMessage({}, function(response) {
 		function toggleAvatars(e)
 		{
 			e.preventDefault();
-			$('.userpic-holder').toggle();
-			$('.userpic-holder').is(':visible') ? $('#avatar-toggle').text("Avatars On") : $('#avatar-toggle').text("Avatars Off");
+			if (showAvatars === true)
+			{
+				$('.userpic-holder').hide();
+			}
+			else
+			{
+				$('.userpic-holder').show();
+			}
+			showAvatars = !showAvatars;
+			console.log('Toggled avatar display, now ' + showAvatars);
+			updateAvatarText();
+			chrome.storage.local.set({"avatars": showAvatars}, function(){ console.log("Avatar settings saved locally"); });
+			// $('.userpic-holder').toggle();
+			// $('.userpic-holder').is(':visible') ? $('#avatar-toggle').text("Avatars On") : $('#avatar-toggle').text("Avatars Off");
+		}
+
+		function updateAvatarText()
+		{
+			showAvatars ? $('#avatar-toggle').text("Avatars On") : $('#avatar-toggle').text("Avatars Off");
 		}
 	}
 	}, 10);
