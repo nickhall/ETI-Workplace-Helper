@@ -95,6 +95,7 @@ chrome.extension.sendMessage({}, function(response) {
 			if ($.inArray(linkID, savedTopics) === -1)
 			{
 				savedTopics[savedTopics.length] = linkID;
+				console.log($(this).prev().text());
 			}
 			else
 			{
