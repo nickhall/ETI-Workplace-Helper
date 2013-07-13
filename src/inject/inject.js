@@ -19,25 +19,30 @@ chrome.extension.sendMessage({}, function(response) {
 
 		// Add link to menu bar (all pages)
 		//$(".menubar a").filter(function(index) { return $(this).text() === "Logout"; }).after(' | <a href="#" class="saved-show">Test</a>');
-		$(".userbar a").filter(function(index) { return $(this).text() === "Help"; }).after(' | <a href="#" class="saved-show">Saved Topics</a> | <a href="#" id="avatar-toggle">Avatars On</a>');
+		$(".userbar a").filter(function(index) { return $(this).text() === "Help"; }).after(' | <a href="#" class="saved-show">Saved Topics</a> | <a href="#" id="avatar-toggle">Avatars On</a> | <a href="#" id="nws-toggle">NWS On</a>');
 		// Add div after userubar
 		$(".userbar").after('<div id="saved-topics"><h3>Saved Topics</h3><ul></ul><a href="#" class="saved-show">Close</a></div>');
 		$('#saved-topics').hide();
 		$(".saved-show").on("click", toggleMenu);
 		$("#avatar-toggle").on("click", toggleAvatars);
+		$('#nws-toggle').on("click", function(){ allowNWS = !allowNWS; allowNWS ? $(this).text("NWS On") : $(this).text("NWS Off"); chrome.storage.local.set({'nws': allowNWS}); });
 		
 		// Disable NWS links (topic list only)
 		$(".fr:contains('NWS')").closest("td").children(".fl").children("a").not(".appended").on("click", function(e)
                                                                               {
-                                                                                  e.preventDefault();
-                                                                                  alert('NWS link');
+                                                                              	if (!allowNWS)
+                                                                              	{
+                                                                                	e.preventDefault();
+                                                                                	alert('NWS link');
+                                                                                }
                                                                               }).css("color", "gray");
 
 		// Storage operations
 		var savedTopics = {};
 		var showAvatars = true;
+		var allowNWS    = true;
 		chrome.storage.sync.get("saved", updateFromStorage);
-		chrome.storage.local.get("avatars", updateFromLocal);
+		chrome.storage.local.get(["avatars", "nws"], updateFromLocal);
 		
 
 		// Logic
@@ -82,6 +87,18 @@ chrome.extension.sendMessage({}, function(response) {
 			{
 				$('.userpic-holder').show();
 			}
+
+			if (items["nws"] === undefined)
+			{
+				console.log("Defaulting NWS allowance to true");
+				chrome.storage.local.set({"nws": true});
+			}
+			else
+			{
+				allowNWS = items["nws"];
+				allowNWS ? $('#nws-toggle').text("NWS On") : $('#nws-toggle').text("NWS Off");
+				console.log("Loaded nws settings from local storage: " + allowNWS);
+			}
 			
 		}
 
@@ -90,10 +107,10 @@ chrome.extension.sendMessage({}, function(response) {
 			if (items["saved"] !== undefined)
 			{
 				savedTopics = items["saved"];
+				console.log("Loaded saved topics from network storage");
 			}
 			updateLinks();
 			rebuildList();
-			console.log("Loaded saved topics from network storage: " + savedTopics);
 		}
 
 		function saveLink(e)
@@ -126,7 +143,7 @@ chrome.extension.sendMessage({}, function(response) {
 
 		function updateLinks()
 		{
-			console.log("All appended links updated");
+			console.log("All appended link text updated");
 			$("a.appended").each(function()
 			{
 				if(savedTopics.hasOwnProperty(this.id))
