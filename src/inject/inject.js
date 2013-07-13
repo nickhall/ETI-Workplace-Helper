@@ -5,7 +5,7 @@ chrome.extension.sendMessage({}, function(response) {
 
 		// ----------------------------------------------------------
 		// This part of the script triggers when page is done loading
-		console.log("Hello. This message was sent from scripts/inject.js");
+		console.log("Running injected script...");
 		// ----------------------------------------------------------
 
 
@@ -34,7 +34,7 @@ chrome.extension.sendMessage({}, function(response) {
                                                                               }).css("color", "gray");
 
 		// Storage operations
-		var savedTopics = [];
+		var savedTopics = {};
 		var showAvatars = true;
 		chrome.storage.sync.get("saved", updateFromStorage);
 		chrome.storage.local.get("avatars", updateFromLocal);
@@ -50,10 +50,17 @@ chrome.extension.sendMessage({}, function(response) {
 		function rebuildList()
 		{
 			$('#saved-topics ul').empty();
-			$(savedTopics).each(function(index, value)
+			for (var key in savedTopics)
 			{
-				$('#saved-topics ul').append('<li><a href="//boards.endoftheinter.net/showmessages.php?topic='+value+'">'+value+'</a></li>');
-			});
+				if (savedTopics.hasOwnProperty(key))
+				{
+					$('#saved-topics ul').append('<li><a href="//boards.endoftheinter.net/showmessages.php?topic='+key+'">'+savedTopics[key]+'</a> <a href="#" class="saved-appended">x</a></li>');
+				}
+			}
+
+			$(".saved-appended").on("click", saveLink);
+
+			console.log('Rebuilt saved topic list');
 		}
 
 		function updateFromLocal(items)
@@ -91,21 +98,18 @@ chrome.extension.sendMessage({}, function(response) {
 
 		function saveLink(e)
 		{
+			e.preventDefault();
 			var linkID = $(this).prev().attr("href").split("=")[1];
-			if ($.inArray(linkID, savedTopics) === -1)
+			if (savedTopics.hasOwnProperty(linkID))
 			{
-				savedTopics[savedTopics.length] = linkID;
-				console.log($(this).prev().text());
+				delete savedTopics[linkID];
+				console.log('Deleted link ' + linkID);
 			}
 			else
 			{
-				var index = $.inArray(linkID, savedTopics);
-				while (index !== -1)
-				{
-					console.log("Removing all instances of " + linkID + " from the array");
-					savedTopics.splice(index, 1);
-					index = $.inArray(linkID, savedTopics);
-				}
+				var linkText = $(this).prev().text();
+				savedTopics[linkID] = linkText;
+				console.log('Saved link ID ' + linkID + ' with title ' + linkText);
 			}
 			chrome.storage.sync.set({"saved": savedTopics}, function()
 			{ 
@@ -114,23 +118,22 @@ chrome.extension.sendMessage({}, function(response) {
 				{
 					alert("There was an error");
 				}
-				console.log("Saved to Chrome storage");
+				console.log("Saved modified link list to network storage");
 				rebuildList();
 			});
 			updateLinks();
-			return false;
 		}
 
 		function updateLinks()
 		{
-			console.log("All links updated");
+			console.log("All appended links updated");
 			$("a.appended").each(function()
 			{
-				if($.inArray(this.id, savedTopics) > -1)
+				if(savedTopics.hasOwnProperty(this.id))
 				{
 					$(this).text("x");
 					$(this).prev().css("font-style", "italic");
-					console.log("Found " + this.id + " in the array");
+					console.log("Found " + this.id + " in saved links, added delete");
 				}
 				else
 				{
@@ -169,14 +172,11 @@ chrome.extension.sendMessage({}, function(response) {
 			console.log('Toggled avatar display, now ' + showAvatars);
 			updateAvatarText();
 			chrome.storage.local.set({"avatars": showAvatars}, function(){ console.log("Avatar settings saved locally"); });
-			// $('.userpic-holder').toggle();
-			// $('.userpic-holder').is(':visible') ? $('#avatar-toggle').text("Avatars On") : $('#avatar-toggle').text("Avatars Off");
 		}
 
 		function updateAvatarText()
 		{
 			showAvatars ? $('#avatar-toggle').text("Avatars On") : $('#avatar-toggle').text("Avatars Off");
-			console.log('updateAvatarText() : ' + showAvatars);
 		}
 	}
 	}, 10);
