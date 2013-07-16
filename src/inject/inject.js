@@ -33,7 +33,7 @@ chrome.extension.sendMessage({}, function(response) {
                                                                               	if (!allowNWS)
                                                                               	{
                                                                                 	e.preventDefault();
-                                                                                	alert('NWS link');
+                                                                                	//alert('NWS link');
                                                                                 }
                                                                               }).css("color", "gray");
 
