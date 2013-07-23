@@ -160,7 +160,7 @@ chrome.extension.sendMessage({}, function(response) {
 			});
 		}
 
-		$(".oh").hover(
+		$(".grid tr td").hover(
 			function()
 			{
 				$(this).closest("tr").children("td").css("background-color", "#EAF2FF");
