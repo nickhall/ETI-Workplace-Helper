@@ -8,7 +8,7 @@ chrome.extension.sendMessage({}, function(response) {
 		console.log("Running injected script...");
 		// ----------------------------------------------------------
 
-
+		// Initial DOM modification
 		// Only affects topic list
 		$(".fl a").after(' <a href="#" class="appended">Save</a>');
 		$(".appended").each(function() {
@@ -18,24 +18,27 @@ chrome.extension.sendMessage({}, function(response) {
 		$(".appended").on("click", saveLink);
 
 		// Add link to menu bar (all pages)
-		//$(".menubar a").filter(function(index) { return $(this).text() === "Logout"; }).after(' | <a href="#" class="saved-show">Test</a>');
 		$(".userbar a").filter(function(index) { return $(this).text() === "Help"; }).after(' | <a href="#" class="saved-show">Saved Topics</a> | <a href="#" id="avatar-toggle">Avatars On</a> | <a href="#" id="nws-toggle">NWS On</a>');
+
 		// Add div after userubar
 		$(".userbar").after('<div id="saved-topics"><h3>Saved Topics</h3><ul></ul><a href="#" class="saved-show">Close</a></div>');
 		$('#saved-topics').hide();
+
+		// Add event handlers (might change this to click() later but w/e)
 		$(".saved-show").on("click", toggleMenu);
 		$("#avatar-toggle").on("click", toggleAvatars);
 		$('#nws-toggle').on("click", function(){ allowNWS = !allowNWS; allowNWS ? $(this).text("NWS On") : $(this).text("NWS Off"); chrome.storage.local.set({'nws': allowNWS}); });
 		
 		// Disable NWS links (topic list only)
-		$(".fr:contains('NWS')").closest("td").children(".fl").children("a").not(".appended").on("click", function(e)
-                                                                              {
-                                                                              	if (!allowNWS)
-                                                                              	{
-                                                                                	e.preventDefault();
-                                                                                	//alert('NWS link');
-                                                                                }
-                                                                              }).css("color", "gray");
+		$(".fr:contains('NWS')").closest("td").children(".fl").children("a").not(".appended").on("click",
+			function(e)
+			{
+            	if (!allowNWS)
+                {
+                e.preventDefault();
+                //alert('NWS link');
+                }
+            }).css("color", "gray");
 
 		// Storage operations
 		var savedTopics = {};
@@ -68,6 +71,7 @@ chrome.extension.sendMessage({}, function(response) {
 			console.log('Rebuilt saved topic list');
 		}
 
+		// Local storage includes NWS ad avatar settings
 		function updateFromLocal(items)
 		{
 			if (items["avatars"] !== undefined)
@@ -102,6 +106,7 @@ chrome.extension.sendMessage({}, function(response) {
 			
 		}
 
+		// Network storage only has saved topics
 		function updateFromStorage(items)
 		{
 			if (items["saved"] !== undefined)
@@ -129,18 +134,14 @@ chrome.extension.sendMessage({}, function(response) {
 				console.log('Saved link ID ' + linkID + ' with title ' + linkText);
 			}
 			chrome.storage.sync.set({"saved": savedTopics}, function()
-			{ 
-				var error = chrome.runtime.lastError;
-				if (error)
-				{
-					alert("There was an error");
-				}
+			{
 				console.log("Saved modified link list to network storage");
 				rebuildList();
 			});
 			updateLinks();
 		}
 
+		// Links here refers to all links that were dynamically added by the script either in the topic list or saved link list
 		function updateLinks()
 		{
 			console.log("All appended link text updated");
@@ -160,6 +161,7 @@ chrome.extension.sendMessage({}, function(response) {
 			});
 		}
 
+		// For table row highlighting
 		$(".grid tr td").hover(
 			function()
 			{
