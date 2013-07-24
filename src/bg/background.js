@@ -1,9 +1,10 @@
-//example of using a message handler from the inject scripts
-chrome.extension.onMessage.addListener(
-  function(request, sender, sendResponse) {
-  	chrome.pageAction.show(sender.tab.id);
-    sendResponse();
-  });
+ //example of using a message handler from the inject scripts
+ chrome.extension.onMessage.addListener(
+   function(request, sender, sendResponse) {
+   	chrome.pageAction.show(sender.tab.id);
+     sendResponse();
+ });
+
 
 // Local storage saves these:
 // bool avatars: True displays avatars
@@ -13,7 +14,7 @@ chrome.extension.onMessage.addListener(
 // string rowColor: Saves the color for table row hover
 // bool rowChangeColor: True enables the row hover color change
 
-alert('Starting default settings');
+//alert('Starting default settings');
 chrome.storage.local.get(null, function(items) {
 	if (items['avatars'] === undefined)
 	{
@@ -37,7 +38,6 @@ chrome.storage.local.get(null, function(items) {
 	{
 		console.log("Defaulting NWS color change to true");
 		chrome.storage.local.set({"nwsChangeColor": true}, function() {});
-		var nwsChangeColor = true;
 	}
 
 	if (items["rowColor"] === undefined)
@@ -52,5 +52,5 @@ chrome.storage.local.get(null, function(items) {
 		chrome.storage.local.set({"rowChangeColor": true}, function() {});
 	}
 
-	alert('Successfully initialized settings');
+	//alert('Successfully initialized settings');
 });
