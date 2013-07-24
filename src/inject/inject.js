@@ -73,81 +73,34 @@ chrome.extension.sendMessage({}, function(response) {
 		// Local storage includes NWS ad avatar settings
 		function loadLocalSettings(items)
 		{
-			if (items["avatars"] !== undefined)
-			{
-				showAvatars = items["avatars"];
-				if (showAvatars === false)
-					$('.userpic-holder').hide();
-				console.log("Loaded avatar settings from local storage: " + showAvatars);
-			}
-			else
-			{
-				console.log("Defaulting avatar display to true")
-				chrome.storage.local.set({"avatars": true});
-			}
+			showAvatars = items["avatars"];
+			if (showAvatars === false)
+				$('.userpic-holder').hide();
+			console.log("Loaded avatar settings from local storage: " + showAvatars);
 			updateAvatarText();
+
 			if (showAvatars === true)
 			{
 				$('.userpic-holder').show();
 			}
-			if (items["nws"] === undefined)
-			{
-				console.log("Defaulting NWS allowance to true");
-				chrome.storage.local.set({"nws": true});
-			}
-			else
-			{
-				allowNWS = items["nws"];
-				allowNWS ? $('#nws-toggle').text("NWS On") : $('#nws-toggle').text("NWS Off");
-				console.log("Loaded nws settings from local storage: " + allowNWS);
-			}
-			if (items["nwsColor"] === undefined)
-			{
-				console.log("Defaulting NWS color to gray");
-				chrome.storage.local.set({"nwsColor": "gray"}, function() {});
-				var nwsColor = "gray";
-			}
-			else
-			{
-				var nwsColor = items['nwsColor'];
-				console.log("Loaded NWS link color settings from local storage: " + nwsColor);
-			}
-			if (items["nwsChangeColor"] === undefined)
-			{
-				console.log("Defaulting NWS color change to true");
-				chrome.storage.local.set({"nwsChangeColor": true}, function() {});
-				var nwsChangeColor = true;
-			}
-			else
-			{
-				var nwsChangeColor = items['nwsChangeColor'];
-			}
+
+			allowNWS = items["nws"];
+			allowNWS ? $('#nws-toggle').text("NWS On") : $('#nws-toggle').text("NWS Off");
+			console.log("Loaded nws settings from local storage: " + allowNWS);
+
+			var nwsColor = items['nwsColor'];
+			console.log("Loaded NWS link color settings from local storage: " + nwsColor);
+
+			var nwsChangeColor = items['nwsChangeColor'];
 			if (nwsChangeColor === true)
 			{
 				$(".fr:contains('NWS')").closest("td").children(".fl").children("a").not(".appended").css('color', nwsColor);
 			}
 
-			if (items["rowColor"] === undefined)
-			{
-				console.log("Defaulting row highlight color to #EAF2FF");
-				chrome.storage.local.set({"rowColor": "#EAF2FF"}, function() {});
-				var rowColor = "#EAF2FF";
-			}
-			else
-			{
-				var rowColor = items['rowColor'];
-				console.log("Loaded row color settings from local storage: " + rowColor);
-			}
-			if (items["rowChangeColor"] === undefined)
-			{
-				console.log("Defaulting row color change to true");
-				chrome.storage.local.set({"rowChangeColor": true}, function() {});
-				var rowChangeColor = true;
-			}
-			else
-			{
-				var rowChangeColor = items['rowChangeColor'];
-			}
+			var rowColor = items['rowColor'];
+			console.log("Loaded row color settings from local storage: " + rowColor);
+			
+			var rowChangeColor = items['rowChangeColor'];
 			if (rowChangeColor === true)
 			{
 				$(".grid tr td").hover(
