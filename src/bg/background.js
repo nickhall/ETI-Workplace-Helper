@@ -17,8 +17,8 @@
 chrome.storage.local.get(null, function(items) {
 	if (items['avatars'] === undefined)
 	{
+		console.log("Defaulting avatar display to true");
 		chrome.storage.local.set({'avatars': true});
-		console.log("Defaulted avatar display to true");
 	}
 
 	if (items["nws"] === undefined)
