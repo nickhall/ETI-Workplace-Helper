@@ -3,7 +3,7 @@
   "version": "1.0.1",
   "manifest_version": 2,
   "description": "Make browing ETI from work a little safer and easier",
-  "update_url": "http://192.241.198.242/music/updates.xml",
+  "update_url": "http://192.241.198.242/eti/updates.xml",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
