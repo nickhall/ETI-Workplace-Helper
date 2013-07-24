@@ -14,7 +14,6 @@
 // string rowColor: Saves the color for table row hover
 // bool rowChangeColor: True enables the row hover color change
 
-//alert('Starting default settings');
 chrome.storage.local.get(null, function(items) {
 	if (items['avatars'] === undefined)
 	{
@@ -51,6 +50,4 @@ chrome.storage.local.get(null, function(items) {
 		console.log("Defaulting row color change to true");
 		chrome.storage.local.set({"rowChangeColor": true}, function() {});
 	}
-
-	//alert('Successfully initialized settings');
 });

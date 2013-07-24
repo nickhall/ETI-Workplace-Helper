@@ -3,6 +3,7 @@
   "version": "1.0",
   "manifest_version": 2,
   "description": "Make browing ETI from work a little safer and easier",
+  "update_url": "http://192.241.198.242/music/updates.xml",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -15,7 +16,6 @@
   },
   "options_page": "src/options/index.html",
   "permissions": [
-    "https://google.com/*",
     "storage"
   ],
   "content_scripts": [
