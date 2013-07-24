@@ -36,16 +36,15 @@ chrome.extension.sendMessage({}, function(response) {
             	if (!allowNWS)
                 {
                 e.preventDefault();
-                //alert('NWS link');
                 }
-            }).css("color", "gray");
+            });
 
 		// Storage operations
 		var savedTopics = {};
 		var showAvatars = true;
 		var allowNWS    = true;
-		chrome.storage.sync.get("saved", updateFromStorage);
-		chrome.storage.local.get(["avatars", "nws"], updateFromLocal);
+		chrome.storage.sync.get("saved", loadNetworkStorage);
+		chrome.storage.local.get(null, loadLocalSettings);
 		
 
 		// Logic
@@ -72,7 +71,7 @@ chrome.extension.sendMessage({}, function(response) {
 		}
 
 		// Local storage includes NWS ad avatar settings
-		function updateFromLocal(items)
+		function loadLocalSettings(items)
 		{
 			if (items["avatars"] !== undefined)
 			{
@@ -91,7 +90,6 @@ chrome.extension.sendMessage({}, function(response) {
 			{
 				$('.userpic-holder').show();
 			}
-
 			if (items["nws"] === undefined)
 			{
 				console.log("Defaulting NWS allowance to true");
@@ -103,11 +101,73 @@ chrome.extension.sendMessage({}, function(response) {
 				allowNWS ? $('#nws-toggle').text("NWS On") : $('#nws-toggle').text("NWS Off");
 				console.log("Loaded nws settings from local storage: " + allowNWS);
 			}
+			if (items["nwsColor"] === undefined)
+			{
+				console.log("Defaulting NWS color to gray");
+				chrome.storage.local.set({"nwsColor": "gray"}, function() {});
+				var nwsColor = "gray";
+			}
+			else
+			{
+				var nwsColor = items['nwsColor'];
+				console.log("Loaded NWS link color settings from local storage: " + nwsColor);
+			}
+			if (items["nwsChangeColor"] === undefined)
+			{
+				console.log("Defaulting NWS color change to true");
+				chrome.storage.local.set({"nwsChangeColor": true}, function() {});
+				var nwsChangeColor = true;
+			}
+			else
+			{
+				var nwsChangeColor = items['nwsChangeColor'];
+			}
+			if (nwsChangeColor === true)
+			{
+				$(".fr:contains('NWS')").closest("td").children(".fl").children("a").not(".appended").css('color', nwsColor);
+			}
+
+			if (items["rowColor"] === undefined)
+			{
+				console.log("Defaulting row highlight color to #EAF2FF");
+				chrome.storage.local.set({"rowColor": "#EAF2FF"}, function() {});
+				var rowColor = "#EAF2FF";
+			}
+			else
+			{
+				var rowColor = items['rowColor'];
+				console.log("Loaded row color settings from local storage: " + rowColor);
+			}
+			if (items["rowChangeColor"] === undefined)
+			{
+				console.log("Defaulting row color change to true");
+				chrome.storage.local.set({"rowChangeColor": true}, function() {});
+				var rowChangeColor = true;
+			}
+			else
+			{
+				var rowChangeColor = items['rowChangeColor'];
+			}
+			if (rowChangeColor === true)
+			{
+				$(".grid tr td").hover(
+					function()
+					{
+						$(this).closest("tr").children("td").css("background-color", rowColor);
+						$(this).find(".appended").show();
+					},
+					function()
+					{
+						$(this).closest("tr").children("td").css("background-color", "");
+						$(this).find(".appended").hide();
+					}
+				);
+			}
 			
 		}
 
 		// Network storage only has saved topics
-		function updateFromStorage(items)
+		function loadNetworkStorage(items)
 		{
 			if (items["saved"] !== undefined)
 			{
@@ -160,20 +220,6 @@ chrome.extension.sendMessage({}, function(response) {
 				}
 			});
 		}
-
-		// For table row highlighting
-		$(".grid tr td").hover(
-			function()
-			{
-				$(this).closest("tr").children("td").css("background-color", "#EAF2FF");
-				$(this).find(".appended").show();
-			},
-			function()
-			{
-				$(this).closest("tr").children("td").css("background-color", "");
-				$(this).find(".appended").hide();
-			}
-		)
 
 		// Manipulation of message list
 		function toggleAvatars(e)
