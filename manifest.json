@@ -1,6 +1,6 @@
 {
   "name": "ETI Workplace Helper",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "manifest_version": 2,
   "description": "Make browing ETI from work a little safer and easier",
   "update_url": "http://192.241.198.242/eti/updates.xml",
@@ -21,7 +21,7 @@
   "content_scripts": [
     {
       "matches": [
-        "http://boards.endoftheinter.net/*"
+        "*://boards.endoftheinter.net/*"
       ],
       "js": [
         "js/jquery/jquery.js",
