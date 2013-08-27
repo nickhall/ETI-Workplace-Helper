@@ -1,6 +1,6 @@
 {
   "name": "ETI Workplace Helper",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "manifest_version": 2,
   "description": "Make browing ETI from work a little safer and easier",
   "update_url": "http://192.241.198.242/eti/updates.xml",
