@@ -42,4 +42,4 @@ chrome.storage.local.get(null, function(items) {
 		console.log("Defaulting row color change to true");
 		chrome.storage.local.set({"rowChangeColor": true}, function() {});
 	}
-}
+});

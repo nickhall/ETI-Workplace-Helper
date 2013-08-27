@@ -1,4 +1,4 @@
-if (document.readyState === "complete") {
+$(document).ready(function() {
 
 	// ----------------------------------------------------------
 	// This part of the script triggers when page is done loading
@@ -193,4 +193,4 @@ if (document.readyState === "complete") {
 	{
 		showAvatars ? $('#avatar-toggle').text("Avatars On") : $('#avatar-toggle').text("Avatars Off");
 	}
-}
+});
