@@ -1,11 +1,3 @@
- //example of using a message handler from the inject scripts
- chrome.extension.onMessage.addListener(
-   function(request, sender, sendResponse) {
-   	chrome.pageAction.show(sender.tab.id);
-     sendResponse();
- });
-
-
 // Local storage saves these:
 // bool avatars: True displays avatars
 // bool nws: True allows NWS links to be clicked and opened
@@ -50,4 +42,4 @@ chrome.storage.local.get(null, function(items) {
 		console.log("Defaulting row color change to true");
 		chrome.storage.local.set({"rowChangeColor": true}, function() {});
 	}
-});
+}
