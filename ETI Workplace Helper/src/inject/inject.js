@@ -42,7 +42,33 @@ $(document).ready(function() {
 	var allowNWS    = true;
 	chrome.storage.sync.get("saved", loadNetworkStorage);
 	chrome.storage.local.get(null, loadLocalSettings);
-	
+
+	// Mutation observers are event listeners that fire on DOM change
+	// Covers both Firefox and Chrome implementations of MutationObserver
+	MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+	var observer = new MutationObserver(function(mutations, observer)
+	{
+		if (showAvatars === false)
+		{
+			mutations.forEach(function(mutation) {
+	   		for (var i = 0; i < mutation.addedNodes.length; i++)
+	   		{
+		 		if ($(mutation.addedNodes[i]).has('.userpic-holder').length === 1)
+		 		{
+					$('.userpic-holder').hide();
+					console.log("New avatars hidden");
+				}
+			}
+			});
+		}
+	});
+
+	observer.observe(document, { subtree: true,	childList: true	});
+
+var insertedNodes = [];
+var observer = new MutationObserver(function(mutations) {
+ 
+});
 
 	// Logic
 	function toggleMenu(e)
