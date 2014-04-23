@@ -65,11 +65,6 @@ $(document).ready(function() {
 
 	observer.observe(document, { subtree: true,	childList: true	});
 
-var insertedNodes = [];
-var observer = new MutationObserver(function(mutations) {
- 
-});
-
 	// Logic
 	function toggleMenu(e)
 	{
