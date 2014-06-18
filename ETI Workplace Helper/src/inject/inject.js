@@ -15,14 +15,18 @@ $(document).ready(function() {
 	$(".appended").on("click", saveLink);
 
 	// Add link to menu bar (all pages)
-	$(".userbar a").filter(function(index) { return $(this).text() === "Help"; }).after(' | <a href="#" class="saved-show">Saved Topics</a> | <a href="#" id="avatar-toggle">Avatars On</a> | <a href="#" id="nws-toggle">NWS On</a>');
+	$(".userbar a").filter(function(index) { return $(this).text() === "Help"; }).after(' | <a href="#" id="poll-show">Today\'s Poll</a> | <a href="#" class="saved-show">Saved Topics</a> | <a href="#" id="avatar-toggle">Avatars On</a> | <a href="#" id="nws-toggle">NWS On</a>');
 
 	// Add div after userubar
 	$(".userbar").after('<div id="saved-topics"><h3>Saved Topics</h3><ul></ul><a href="#" class="saved-show">Close</a></div>');
 	$('#saved-topics').hide();
 
+	$(".userbar").after('<div id="poll-div">Placeholder</div>');
+	$('#poll-div').hide();
+
 	// Add event handlers (might change this to click() later but w/e)
 	$(".saved-show").on("click", toggleMenu);
+	$("#poll-show").on("click", togglePoll);
 	$("#avatar-toggle").on("click", toggleAvatars);
 	$('#nws-toggle').on("click", function(){ allowNWS = !allowNWS; allowNWS ? $(this).text("NWS On") : $(this).text("NWS Off"); chrome.storage.local.set({'nws': allowNWS}); });
 	
@@ -70,6 +74,46 @@ $(document).ready(function() {
 	{
 		e.preventDefault();
 		$("#saved-topics").is(':visible') ? $("#saved-topics").slideUp('fast', function(){}) : $("#saved-topics").slideDown('fast', function(){});
+	}
+
+	function togglePoll(e)
+	{
+		e.preventDefault();
+		if ($("#poll-div").is(':visible'))
+			{
+				$("#poll-div").slideUp('fast', function(){});
+			}
+			else
+			{
+				//rebuildPoll(function() { $("#poll-div").slideDown('fast', function(){}); });
+				rebuildPoll(function(){});
+				$("#poll-div").text("Loading...");
+				$("#poll-div").slideDown('fast', function(){});
+			}
+	}
+
+	function rebuildPoll(callback)
+	{
+		var poll = "Loading...";
+		$.get("//endoftheinter.net/main.php", function(data)
+			{
+				poll = $(data).find(".poll")[0].innerHTML;
+				var pollDiv = $("#poll-div");
+				pollDiv.hide();
+				pollDiv.html(poll);
+				pollDiv.slideDown('fast', function(){});
+				console.log("Successfully scraped poll data.");
+
+				// Adjust URLs so they call the correct domain
+				$("#poll-div form").attr('action', '//endoftheinter.net/poll.php');
+				$("#poll-div form a").each(function(index, value)
+				{
+					var newTarget = $(this).attr('href');
+					$(this).attr('href', '//endoftheinter.net/' + newTarget);
+				});
+				//$("#poll-div a").last().after(' | <a href="#" id="close-poll">Close Poll</a>')
+				callback();
+			});
 	}
 
 	function rebuildList()
